@@ -2,11 +2,9 @@ import numpy as np
 import tensorflow as tf
 import os
 
-
 img_width = 28
 img_classes = 10
 img_chan = 1
-
 
 def fgm(model, image, eps=0.01, epochs=1):
     xadv = tf.identity(image)
@@ -45,7 +43,6 @@ def fgm(model, image, eps=0.01, epochs=1):
                             name='fast_gradient')
     return xadv
 
-
 #Construction graph
 def model(x, logits=False, training=False):
     with tf.variable_scope('conv0'):
@@ -80,7 +77,6 @@ class Model:
 
 sess_model = Model()
 
-
 with tf.variable_scope('model'):
     sess_model.x = tf.placeholder(tf.float32, (None, img_width, img_width, img_chan),
                                   name='x')
@@ -99,23 +95,20 @@ with tf.variable_scope('model'):
         sess_model.loss = tf.reduce_mean(xent, name='loss')
 
     with tf.variable_scope('train_op'):
-        optimizer = tf.train.AdamOptimizer()
+        optimizer = tf.train.AdamOptimizer()#此函数是Adam优化算法：是一个寻找全局最优点的优化算法，引入了二次方梯度校正
         sess_model.train_op = optimizer.minimize(sess_model.loss)
 
     sess_model.saver = tf.train.Saver()#创建saver对象
-
 
 with tf.variable_scope('model', reuse=True):
     sess_model.fgsm_eps = tf.placeholder(tf.float32, (), name='fgsm_eps')
     sess_model.fgsm_epochs = tf.placeholder(tf.int32, (), name='fgsm_epochs')
     sess_model.x_fgsm = fgm(model, sess_model.x, epochs=sess_model.fgsm_epochs, eps=sess_model.fgsm_eps)
 
-
 #Retrieve the pre-stored model
 sess = tf.InteractiveSession()
 saver = tf.train.import_meta_graph('model/mnist.meta') # 加载训练好的模型的meta值
 saver.restore(sess, tf.train.latest_checkpoint('./model'))# 加载训练好的参数模型
-
 
 def make_fgsm(sess, env, X_data, epochs=1, eps=0.01, batch_size=128):
     n_sample = X_data.shape[0]
@@ -162,7 +155,6 @@ def evaluate(sess, env, X_data, y_data, batch_size=128):
     print(' loss: {0:.4f} acc: {1:.4f}'.format(loss, acc))
     return loss, acc
 
-
 def train(sess, env, Xdata, ydata, X_valid=None, y_valid=None, epochs=1,
           load=False, shuffle=True, batch_size=128, name='model'):
     """
@@ -201,7 +193,6 @@ def train(sess, env, Xdata, ydata, X_valid=None, y_valid=None, epochs=1,
         print('\n Saving model')
         os.makedirs('model', exist_ok=True)
         env.saver.save(sess, 'model/{}'.format(name))
-
 
 def predict(sess, env, X_data, batch_size=128):
     """

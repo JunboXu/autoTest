@@ -32,6 +32,7 @@ def test():
     result = generate(X_test[0:100], (100, 28, 28, 1))
     predict(sess,sess_model,X_test[0:100])
     predict(sess,sess_model,result[0:100])
+    print()
     # y1=np.argmax(predict(sess,sess_model,X_train[0:100]),axis=1)
     # y2=np.argmax(predict(sess,sess_model,result),axis=1)
     # for i in range(0, 99):

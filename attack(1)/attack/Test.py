@@ -16,7 +16,7 @@ def formNPY():
     X_train, y_train, X_test, y_test = getData()
     np.save("test_data/test_data.npy",X_test)
     start=time.clock()
-    attacks=generate(X_test,[10000,28,28,1])
+    attacks=generate(X_test,(10000,28,28,1))
     end=time.clock()
     print('生成10k对抗样本时间 %s'%(end-start))
     np.save("attack_data/attack_data.npy",attacks)
@@ -29,7 +29,7 @@ def readNPY():
 def test():
     X_train, y_train, X_test, y_test = getData()
     # Calculate SSIM
-    result = generate(X_test[0:100], (100, 28, 28, 1))
+    result = generate(X_test[0:10000], (10000, 28, 28, 1))
     predict(sess,sess_model,X_test[0:100])
     predict(sess,sess_model,result[0:100])
     print()
@@ -41,6 +41,6 @@ def test():
     #     # print(y1[i], y2[i], sess.run(tf.image.ssim(t1, t2, 1)))
     #     print(sess.run(tf.image.ssim(t1, t2, 1)))
 
-# formNPY()
-readNPY()
+formNPY()
+# readNPY()
 # test()
